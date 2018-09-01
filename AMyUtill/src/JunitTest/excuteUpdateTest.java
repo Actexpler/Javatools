@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import JdbcUtil.JdbcUtil;
+import JdbcUtil.wzcJdbc;
 import JdbcUtil.RowMap;
 import pojo.Student;
 
@@ -29,13 +29,13 @@ public class excuteUpdateTest {
 	}
 	@Test
 	public void test() {
-		int result = JdbcUtil.executeUpdate("insert into STUDENT values(?,?,?)", 6, "刘七","asdf1234");
+		int result = wzcJdbc.executeUpdate("insert into STUDENT values(?,?,?)", 6, "刘七","asdf1234");
 		assertEquals(result, 1);
 	}
 	
 	@Test
 	public void executeQueryTest(){
-		List<Student> reStudents = JdbcUtil.executeQuery("select * from STUDENT", new RowMap<Student>() {
+		List<Student> reStudents = wzcJdbc.executeQuery("select * from STUDENT", new RowMap<Student>() {
 
 			@Override
 			public Student rowMapping(ResultSet rs) {
