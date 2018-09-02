@@ -20,7 +20,7 @@ import java.util.List;
  * @date 2018年1月11日 下午9:20:06
  *
  */
-public class wzcJdbc {
+public class MJDBC {
 	
 	/**
 	 * 获取连接
