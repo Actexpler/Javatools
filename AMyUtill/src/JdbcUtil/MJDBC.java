@@ -34,7 +34,9 @@ public class MJDBC {
 		Connection conn = null;
 		try {
 			logger.info("[wzc]正在获取数据库连接...");
+			//一、加载驱动
 			Class.forName(DataSource.DRIVER);
+			//二、提供JDBC连接的URL 并创建连接
 			conn = DriverManager.getConnection(DataSource.URL, DataSource.USERNAME, DataSource.PASSWORD);
 			logger.info("连接成功！！");
 		} catch (ClassNotFoundException e) {
@@ -85,17 +87,39 @@ public class MJDBC {
 		Connection connection = null;
 		PreparedStatement prepareStatement = null;
 		try {
+			//加载驱动，提供JDBC连接的URL 并创建连接
 			connection = getConnection();
+            //三、创建一个Statement   
+			/**
+			 * 要执行SQL语句，必须获得java.sql.Statement实例，Statement实例分为以下3   种类型：   
+			      1、执行静态SQL语句。通常通过Statement实例实现。   
+			      2、执行动态SQL语句。通常通过PreparedStatement实例实现。   
+			      3、执行数据库存储过程。通常通过CallableStatement实例实现。   
+			 */
 			prepareStatement = connection.prepareStatement(sql);
 			for (int i = 0; i < params.length; i++) {
 				prepareStatement.setObject(i+1, params[i]);
 			}
+			//四、执行SQL语句   
+			/**
+			 *   Statement接口提供了三种执行SQL语句的方法：executeQuery 、executeUpdate    和execute   
+				 1、ResultSet executeQuery(String sqlString)：执行查询数据库的SQL语句   ，返回一个结果集（ResultSet）对象。   
+				 2、int executeUpdate(String sqlString)：用于执行INSERT、UPDATE或   DELETE语句以及SQL DDL语句，如：CREATE TABLE和DROP TABLE等   
+				 3、execute(sqlString):用于执行返回多个结果集、多个更新计数或二者组合的   语句。   
+			 */
+			//五处理结果   
+		    /**两种情况：   
+		     1、执行更新返回的是本次操作影响到的记录数。   
+		     2、执行查询返回的结果是一个ResultSet对象。   
+			*/
 			result = prepareStatement.executeUpdate();
-			//关闭连接
-			closeConnection(null, prepareStatement, connection);
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			//六、关闭JDBC对象    
+			closeConnection(null, prepareStatement, connection);
 		}
 		
 		return result;
@@ -115,7 +139,15 @@ public class MJDBC {
 		 
 		
 		 try {
+			//一、二、加载驱动创建连接
 			connection = getConnection();
+			 //三、创建一个Statement   
+			/**
+			 * 要执行SQL语句，必须获得java.sql.Statement实例，Statement实例分为以下3   种类型：   
+			      1、执行静态SQL语句。通常通过Statement实例实现。   
+			      2、执行动态SQL语句。通常通过PreparedStatement实例实现。   
+			      3、执行数据库存储过程。通常通过CallableStatement实例实现。   
+			 */
 			pStatement = connection.prepareStatement(sql);
 			if (params != null) {
 				for (int i = 0; i < params.length; i++) {
@@ -123,20 +155,34 @@ public class MJDBC {
 					
 				}
 			}
+			//四、执行SQL语句   
+			/**
+			 *   Statement接口提供了三种执行SQL语句的方法：executeQuery 、executeUpdate    和execute   
+				 1、ResultSet executeQuery(String sqlString)：执行查询数据库的SQL语句   ，返回一个结果集（ResultSet）对象。   
+				 2、int executeUpdate(String sqlString)：用于执行INSERT、UPDATE或   DELETE语句以及SQL DDL语句，如：CREATE TABLE和DROP TABLE等   
+				 3、execute(sqlString):用于执行返回多个结果集、多个更新计数或二者组合的   语句。   
+			 */
 			rSet = pStatement.executeQuery();
+			//五处理结果   
+		    /**两种情况：   
+		     1、执行更新返回的是本次操作影响到的记录数。   
+		     2、执行查询返回的结果是一个ResultSet对象。   
+			*/
 			while(rSet.next()){
 				//创建一个对象
 				T t = rowMap.rowMapping(rSet);
-				//通过rs给对象复制
+				//通过rs给对象属性赋值
 				
 				//将对象放到list中
 				result.add(t);
 			}
-			//关闭连接
-			closeConnection(rSet, pStatement, connection);
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			//六、关闭连接
+			closeConnection(rSet, pStatement, connection);
 		}
 		 return result;
 	 }
