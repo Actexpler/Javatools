@@ -31,6 +31,7 @@ public class DataSource {
 			  Properties props = new Properties(); 
 	          props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("jdbc.properties"));//从自定义配置文件获取相关参数
 	          URL = props.getProperty("URL");
+	          logger.info("你将连接的数据库URL为："+URL);
 	          USERNAME = props.getProperty("USERNAME");
 	          PASSWORD = props.getProperty("PASSWORD");
 	          DRIVER  = props.getProperty("DRIVER");

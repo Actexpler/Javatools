@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * 
@@ -22,6 +24,8 @@ import java.util.List;
  */
 public class MJDBC {
 	
+	private static Logger logger  = Logger.getLogger(MJDBC.class);
+	
 	/**
 	 * 获取连接
 	 * @return  Connection
@@ -29,10 +33,12 @@ public class MJDBC {
 	public static Connection getConnection(){
 		Connection conn = null;
 		try {
+			logger.info("[wzc]正在获取数据库连接...");
 			Class.forName(DataSource.DRIVER);
 			conn = DriverManager.getConnection(DataSource.URL, DataSource.USERNAME, DataSource.PASSWORD);
+			logger.info("连接成功！！");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+		    logger.error("连接失败！！！");
 			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -49,6 +55,7 @@ public class MJDBC {
 	 */
 	public static void  closeConnection(ResultSet rs,PreparedStatement ps, Connection conn){
 		try {
+			logger.info("正在关闭数据库连接...");
 			if (rs != null) {
 				rs.close();
 			}
@@ -59,8 +66,10 @@ public class MJDBC {
 				conn.close();
 			}
 			
+		   logger.info("关闭成功！！");
+			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			logger.error("关闭失败！！");
 			e.printStackTrace();
 		}
 	}
@@ -82,6 +91,8 @@ public class MJDBC {
 				prepareStatement.setObject(i+1, params[i]);
 			}
 			result = prepareStatement.executeUpdate();
+			//关闭连接
+			closeConnection(null, prepareStatement, connection);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,6 +132,8 @@ public class MJDBC {
 				//将对象放到list中
 				result.add(t);
 			}
+			//关闭连接
+			closeConnection(rSet, pStatement, connection);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
