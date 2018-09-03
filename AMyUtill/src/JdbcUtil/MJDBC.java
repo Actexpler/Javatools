@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PrimitiveIterator.OfDouble;
 
 import org.apache.log4j.Logger;
 
@@ -33,14 +34,14 @@ public class MJDBC {
 	public static Connection getConnection(){
 		Connection conn = null;
 		try {
-			logger.info("[wzc]正在获取数据库连接...");
+			logger.info("[wzc][info]正在获取数据库连接...");
 			//一、加载驱动
 			Class.forName(DataSource.DRIVER);
 			//二、提供JDBC连接的URL 并创建连接
 			conn = DriverManager.getConnection(DataSource.URL, DataSource.USERNAME, DataSource.PASSWORD);
-			logger.info("连接成功！！");
+			logger.info("[wzc][info]连接成功！！");
 		} catch (ClassNotFoundException e) {
-		    logger.error("连接失败！！！");
+		    logger.error("[wzc][error]连接失败！！！");
 			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -57,7 +58,7 @@ public class MJDBC {
 	 */
 	public static void  closeConnection(ResultSet rs,PreparedStatement ps, Connection conn){
 		try {
-			logger.info("正在关闭数据库连接...");
+			logger.info("[wzc][info]正在关闭数据库连接...");
 			if (rs != null) {
 				rs.close();
 			}
@@ -68,10 +69,10 @@ public class MJDBC {
 				conn.close();
 			}
 			
-		   logger.info("关闭成功！！");
+		   logger.info("[wzc][info]关闭成功！！");
 			
 		} catch (SQLException e) {
-			logger.error("关闭失败！！");
+			logger.error("[wzc][error]关闭失败！！");
 			e.printStackTrace();
 		}
 	}
@@ -114,8 +115,23 @@ public class MJDBC {
 			*/
 			result = prepareStatement.executeUpdate();
 			
+			System.out.println("[wzc][info]you are come on the sql is  "+sql);
+			System.out.print("[wzc][info][params]");
+			for (int i = 1; i <= params.length; i++) {
+				System.out.print("param"+i+":"+params[i-1]+" ");
+			}
+			System.out.println(" ");
+			logger.info("[wzc][info]the result is:"+result);
+			
+			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			logger.error("[wzc][error]there are some mistakes ,you need to correct");
+			System.err.println("[wzc][error][sql]"+sql);
+			System.err.print("[wzc][error][params]");
+			for (int i = 1; i < params.length; i++) {
+				System.err.print("param"+i+":"+params[i-1]+" ");
+			}
+			System.err.println(" ");
 			e.printStackTrace();
 		}finally {
 			//六、关闭JDBC对象    
@@ -136,7 +152,7 @@ public class MJDBC {
 		 Connection connection= null;
 		 PreparedStatement pStatement = null;
 		 ResultSet rSet = null;
-		 
+		 int resultCount = 0;
 		
 		 try {
 			//一、二、加载驱动创建连接
@@ -175,10 +191,24 @@ public class MJDBC {
 				
 				//将对象放到list中
 				result.add(t);
+				resultCount++;
 			}
+			System.out.println("[wzc][info]you are come on the sql is  "+sql);
+			System.out.print("[wzc][info][params]");
+			for (int i = 1; i <= params.length; i++) {
+				System.out.print("param"+i+":"+params[i-1]+" ");
+			}
+			System.out.println(" ");
+			logger.info("[wzc][info]the result is:"+resultCount);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			logger.error("[wzc][error]there are some mistakes ,you need to correct");
+			System.err.println("[wzc][error][sql]"+sql);
+			System.err.print("[wzc][error][params]");
+			for (int i = 1; i < params.length; i++) {
+				System.err.print("param"+i+":"+params[i-1]+" ");
+			}
+			System.err.println(" ");
 			e.printStackTrace();
 		}finally {
 			//六、关闭连接
